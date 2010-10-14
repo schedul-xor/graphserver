@@ -20,7 +20,7 @@ Direct questions and comments to the <a href="http://groups.google.com/group/gra
  
 <h2>Download</h2> 
  
-<pre style="background-color:#F5F5F5"> $ wget http://github.com/graphserver/graphserver/zipball/08132009</pre> 
+<pre style="background-color:#F5F5F5"> $ wget http://github.com/graphserver/graphserver/tarball/14102010</pre> 
  
 Or, for the stout of heart, get a copy of the current working branch
  
@@ -51,7 +51,6 @@ On Fedora:
 $ yum install python-setuptools-devel
 $ yum install gcc
 $ yum install gcc-c++
-$ yum install python-devel
 $ easy_install simplejson
 </pre>
  
@@ -67,15 +66,14 @@ $ sudo python setup.py install
  
 <h3>Install RTree</h3>
 <p>If you want to load OSM Data (and you probably do), you have to laboriously install RTree</p>
-<pre style="background-color:#F5F5F5"> $ wget http://download.osgeo.org/libspatialindex/spatialindex-1.4.0.tar.gz
- $ gunzip spatialindex-1.4.0.tar.gz
- $ tar -xvf spatialindex-1.4.0.tar
- $ cd spatialindex-1.4.0
+<pre style="background-color:#F5F5F5"> $ wget http://download.osgeo.org/libspatialindex/spatialindex-src-1.6.0.tar.gz
+ $ gunzip spatialindex-1.6.0.tar.gz
+ $ tar -xvf spatialindex-1.6.0.tar
+ $ cd spatialindex-1.6.0
  $ ./configure --prefix=/usr
  $ make
  $ make install
  $ easy_install RTree
- $ cp /usr/lib/python2.5/site-packages/Rtree-0.5.0-py2.5-linux-i686.egg/libsidx.so /usr/lib
 </pre>
  
 <h2>A Quick Tour of the Basics</h2> 
@@ -124,16 +122,16 @@ $ python
 <h3>Loading OpenStreetMap Data</h3>
 
 Grab some OSM data. Here, we download an area around of Redding, CA, US from the OpenStreetMap HTTP API.
-<pre style="background-color:#F5F5F5"> $ wget http://api.openstreetmap.org/api/0.6/map?bbox=-122.4624,40.5505,-122.2876,40.6334 -O map.osm
+<pre style="background-color:#F5F5F5"> $ wget http://api.openstreetmap.org/api/0.6/map?bbox=-122.4624,40.5505,-122.2876,40.6334 -O redding.osm
 </pre>
 <p>Compile the OSM file into an OSMDB file, and then load that OSMDB file into a graph.</p>
 <pre style="background-color:#F5F5F5"> $ gs_osmdb_compile map.osm map.osmdb
- $ gs_import_osm map.gdb map.osmdb
+ $ gs_import_osm redding.gdb redding.osmdb
 </pre>
 <p>Take a look at your new graph. This prints every vertex label in the graph:</p>
-<pre style="background-color:#F5F5F5"> $ gs_gdb_inspect map.gdb</pre>
+<pre style="background-color:#F5F5F5"> $ gs_gdb_inspect redding.gdb</pre>
 <p>Pick one and see all edges outgoing from that vertex:</p>
-<pre style="background-color:#F5F5F5"> $ gs_gdb_inspect map.gdb osm-92080455</pre>
+<pre style="background-color:#F5F5F5"> $ gs_gdb_inspect redding.gdb osm-92080455</pre>
 Prints:
 <pre style="background-color:#F5F5F5">osm-92080455 -> osm-91938757
 	&lt;Street name='10585937-1' length=136.119463 rise=0.000000 fall=0.000000 way=849&gt;
@@ -154,25 +152,23 @@ Grab the GTFS file for your favorite transit agency. Here, we grab the GTFS for 
 <p>Use gs_gdb_inspect to check that your new transit graph is in good shape</p>
 <pre style="background-color:#F5F5F5"> $ gs_gdb_inspect redding.gdb sta-3622</pre>
 should print
-<pre style="background-color:#F5F5F5">sta-3622 -> psv-0-000-004
+<pre style="background-color:#F5F5F5">sta-3622 -> psv-0-000-004-105A166 
 	&lt;TripBoard int_sid=0 sid=105A166 agency=0 calendar=165157760 timezone=164034504 boardings=[('1572A105B166', 23964), ('1598A105B166', 27564), ('1602A105B166', 31164), ('1607A105B166', 34764), ('1600A105B166', 38364), ('1605A105B166', 41964), ('1603A105B166', 45564), ('1608A105B166', 49164), ('1601A105B166', 52764), ('1606A105B166', 56364), ('1599A105B166', 59964), ('1604A105B166', 63564), ('1609A105B166', 67164)]&gt;
-sta-3622 -> psv-0-000-004
+sta-3622 -> psv-0-000-004-106A166 
 	&lt;TripBoard int_sid=1 sid=106A166 agency=0 calendar=165157760 timezone=164034504 boardings=[('2459A106B166', 34764), ('1635A106B166', 38364), ('1640A106B166', 41964), ('1638A106B166', 45564), ('1643A106B166', 49164), ('1636A106B166', 52764), ('1641A106B166', 56364), ('1634A106B166', 59964), ('1639A106B166', 63564), ('1637A106B166', 67164)]&gt;
 </pre>
 
 <h3>Intermingling Public Transit and Street Data</h3> 
 <p>You can load both OSM and GTFS data into the same graph, then run a command to link them.</p>
-<pre style="background-color:#F5F5F5"> $ gs_import_gtfs redding_all.gdb redding.gtfsdb
- $ gs_import_osm redding_all.gdb map.osmdb
- $ gs_link_osm_gtfs redding_all.gdb map.osmdb redding.gtfsdb</pre>
+<pre style="background-color:#F5F5F5"> $ gs_link_osm_gtfs redding.gdb redding.osmdb redding.gtfsdb</pre>
 <p>Inspect:</p>
 <pre style="background-color:#F5F5F5"> $ gs_gdb_inspect redding.gdb sta-3622</pre>
 <p>prints:</p>
 <pre style="background-color:#F5F5F5">sta-3622 -> osm-92366549
 	&lt;graphserver.core.Link object at 0x9a0b20c&gt;
-sta-3622 -> psv-0-000-004
+sta-3622 -> psv-0-000-004-105A166
 	&lt;TripBoard int_sid=0 sid=105A166 agency=0 calendar=163855912 timezone=161122808 boardings=[('1572A105B166', 23964), ('1598A105B166', 27564), ('1602A105B166', 31164), ('1607A105B166', 34764), ('1600A105B166', 38364), ('1605A105B166', 41964), ('1603A105B166', 45564), ('1608A105B166', 49164), ('1601A105B166', 52764), ('1606A105B166', 56364), ('1599A105B166', 59964), ('1604A105B166', 63564), ('1609A105B166', 67164)]&gt;
-sta-3622 -> psv-0-000-004
+sta-3622 -> psv-0-000-004-105A166
 	&lt;TripBoard int_sid=1 sid=106A166 agency=0 calendar=163855912 timezone=161122808 boardings=[('2459A106B166', 34764), ('1635A106B166', 38364), ('1640A106B166', 41964), ('1638A106B166', 45564), ('1643A106B166', 49164), ('1636A106B166', 52764), ('1641A106B166', 56364), ('1634A106B166', 59964), ('1639A106B166', 63564), ('1637A106B166', 67164)]&gt;</pre>
 
 <h3>Inspecting the graph with gs_crawl</h3>
@@ -183,6 +179,10 @@ sta-3622 -> psv-0-000-004
 <pre style="background-color:#F5F5F5">http://YOUR-EC2-ADDRESS.compute-1.amazonaws.com/</pre>
 <p>Or if you're simply running on your local machine:</p>
 <pre style="background-color:#F5F5F5">http://localhost:80/</pre>
+<p>Look a list of all vertices</p>
+<pre style="background-color:#F5F5F5">http://HOSTNAME/vertices</pre>
+<p>Check out the incoming and outgoing edges from a particlar vertex</p>
+<pre style="background-color:#F5F5F5">http://HOSTNAME/vertex?label="sta-3594"</pre>
  
 <h3 id="routeserver">Getting routes with gs_routeserver</h3>
 <p>First, you'll need PyYAML</p>
