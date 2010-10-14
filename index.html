@@ -125,7 +125,7 @@ Grab some OSM data. Here, we download an area around of Redding, CA, US from the
 <pre style="background-color:#F5F5F5"> $ wget http://api.openstreetmap.org/api/0.6/map?bbox=-122.4624,40.5505,-122.2876,40.6334 -O redding.osm
 </pre>
 <p>Compile the OSM file into an OSMDB file, and then load that OSMDB file into a graph.</p>
-<pre style="background-color:#F5F5F5"> $ gs_osmdb_compile map.osm map.osmdb
+<pre style="background-color:#F5F5F5"> $ gs_osmdb_compile redding.osm redding.osmdb
  $ gs_import_osm redding.gdb redding.osmdb
 </pre>
 <p>Take a look at your new graph. This prints every vertex label in the graph:</p>
