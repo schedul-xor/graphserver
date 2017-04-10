@@ -24,7 +24,7 @@ elapseTimeGetSeconds(ElapseTime* this) {
     return this->seconds;
 }
 
-inline State*
+State*
 elapseTimeWalkGeneral(EdgePayload* this, State* state, WalkOptions* options, int forward) {
   
   State* ret = stateDup( state );
@@ -44,12 +44,12 @@ elapseTimeWalkGeneral(EdgePayload* this, State* state, WalkOptions* options, int
   return ret;
 }
 
-inline State*
+State*
 elapseTimeWalk(EdgePayload* this, State* state, WalkOptions* options) {
     return elapseTimeWalkGeneral( this, state, options, TRUE );
 }
 
-inline State*
+State*
 elapseTimeWalkBack(EdgePayload* this, State* state, WalkOptions* options) {
     return elapseTimeWalkGeneral( this, state, options, FALSE );
 }

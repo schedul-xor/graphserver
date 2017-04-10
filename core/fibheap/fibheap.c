@@ -73,7 +73,7 @@ fibnode_new (void)
   return node;
 }
 
-static inline int
+static int
 fibheap_compare (fibheap_t heap, fibnode_t a, fibnode_t b)
 {
   if (a->key < b->key)
@@ -83,7 +83,7 @@ fibheap_compare (fibheap_t heap, fibnode_t a, fibnode_t b)
   return 0;
 }
 
-static inline int
+static int
 fibheap_comp_data (fibheap_t heap, fibheapkey_t key, void *data, fibnode_t b)
 {
   struct fibnode a;

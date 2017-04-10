@@ -29,13 +29,13 @@ hash(struct hashtable *h, void *k);
 
 /*****************************************************************************/
 /* indexFor */
-static inline unsigned int
+static unsigned int
 indexFor(unsigned int tablelength, unsigned int hashvalue) {
     return (hashvalue % tablelength);
 };
 
 /* Only works if tablelength == 2^N */
-/*static inline unsigned int
+/*static unsigned int
 indexFor(unsigned int tablelength, unsigned int hashvalue)
 {
     return (hashvalue & (tablelength - 1u));
